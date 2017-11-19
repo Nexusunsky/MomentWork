@@ -105,8 +105,8 @@ public class MomentLayout extends FrameLayout {
         if (isInEditMode()) {
             return;
         }
-        GradientDrawable background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{0xff323232, 0xff323232, 0xffffffff, 0xffffffff});
+        GradientDrawable background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new
+                int[]{0xff323232, 0xff323232, 0xffffffff, 0xffffffff});
         setBackground(background);
 
         if (recyclerView == null) {
@@ -148,8 +148,8 @@ public class MomentLayout extends FrameLayout {
         this.currentStatus = status;
     }
 
-    public void compelete() {
-        Logger.i(TAG, "compelete");
+    public void complete() {
+        Logger.i(TAG, "complete");
         if (pullMode == PullMode.FROM_START && iconObserver != null) {
             iconObserver.catchResetEvent();
         }
@@ -165,10 +165,10 @@ public class MomentLayout extends FrameLayout {
         }
         setPullMode(PullMode.FROM_START);
         setCurrentStatus(Status.REFRESHING);
-        iconObserver.autoRefresh();
         postDelayed(new Runnable() {
             @Override
             public void run() {
+                iconObserver.autoRefresh();
                 mInteractListener.onRefresh();
             }
         }, DELAY_MILLIS);
@@ -187,11 +187,6 @@ public class MomentLayout extends FrameLayout {
     }
 
     //------------------------------------------get/set-----------------------------------------------
-
-    public OnInteractListener getInteractListener() {
-        return mInteractListener;
-    }
-
     public void setInteractListener(OnInteractListener interactListener) {
         this.mInteractListener = interactListener;
     }
@@ -309,8 +304,6 @@ public class MomentLayout extends FrameLayout {
      * 判断recyclerview是否滑到底部
      * <p>
      * 原理：判断滑过的距离加上屏幕上的显示的区域是否比整个控件高度高
-     *
-     * @return
      */
     public boolean isScrollToBottom() {
         return recyclerView != null &&
@@ -318,11 +311,9 @@ public class MomentLayout extends FrameLayout {
                         recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange();
     }
 
-
     public int findFirstVisibleItemPosition() {
         return linearLayoutManager.findFirstVisibleItemPosition();
     }
-
 
     /**
      * scroll listener
@@ -440,7 +431,7 @@ public class MomentLayout extends FrameLayout {
                         refreshIcon.clearAnimation();
                     }
                 });
-                mValueAnimator.setDuration(540);
+                mValueAnimator.setDuration(500);
             }
 
             refreshIcon.post(new Runnable() {
@@ -456,9 +447,9 @@ public class MomentLayout extends FrameLayout {
         }
 
         void autoRefresh() {
-            ValueAnimator animator = ValueAnimator.ofFloat(0, refreshPosition);
+            final ValueAnimator animator = ValueAnimator.ofFloat(0, refreshPosition);
             animator.setInterpolator(new LinearInterpolator());
-            animator.setDuration(540);
+            animator.setDuration(500);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -472,7 +463,12 @@ public class MomentLayout extends FrameLayout {
                     catchRefreshEvent();
                 }
             });
-            animator.start();
+            refreshIcon.post(new Runnable() {
+                @Override
+                public void run() {
+                    animator.start();
+                }
+            });
         }
     }
 

@@ -14,8 +14,8 @@ import com.lh.nexusunsky.baselib.utils.MessageHelper;
 import com.lh.nexusunsky.domain.MineInfo;
 import com.lh.nexusunsky.domain.MomentsInfo;
 import com.lh.nexusunsky.impl.MomentPresenter;
-import com.lh.nexusunsky.item.moments.EmptyMomentItem;
 import com.lh.nexusunsky.item.HostItem;
+import com.lh.nexusunsky.item.moments.EmptyMomentItem;
 import com.lh.nexusunsky.item.moments.MomentItem;
 import com.lh.nexusunsky.item.moments.MultiTypeMomentsItem;
 import com.lh.nexusunsky.item.moments.TextOnlyMomentItem;
@@ -44,6 +44,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     private void attach() {
         presenter = new MomentPresenter(MomentIndexActivity.this);
+        layoutMoment.autoRefresh();
     }
 
     private void setNavigation() {
@@ -95,7 +96,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
                 .addType(TextOnlyMomentItem.class, MomentItem.Type.TEXT_ONLY, R.layout.moments_only_text);
         adapter = builder.build();
         layoutMoment.setAdapter(adapter);
-        layoutMoment.autoRefresh();
     }
 
     @Override
@@ -117,7 +117,12 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     public void refreshMoments(List<MomentsInfo> infos) {
         loadDataComplete();
         adapter.updateData(infos);
-        layoutMoment.setMode(Mode.BOTH);
+        AppContext.getMainHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layoutMoment.setMode(Mode.BOTH);
+            }
+        }, MomentLayout.MID_DELAY_MILLIS);
     }
 
     @Override
@@ -133,7 +138,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void loadDataComplete() {
-        layoutMoment.compelete();
+        layoutMoment.complete();
     }
 
     @Override
