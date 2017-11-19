@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--圆形头像-->
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension"/>
+        <attr name="civ_border_color" format="color"/>
+        <attr name="civ_border_overlay" format="boolean"/>
+        <attr name="civ_fill_color" format="color"/>
+    </declare-styleable>
+    <!--点击展开布局-->
+    <declare-styleable name="ExpandInfoOnClickLayout">
+        <attr name="show_line"
+              format="integer"/>
+        <attr name="click_text"
+              format="string"/>
+        <attr name="text_color"
+              format="color"/>
+        <attr name="text_size"
+              format="dimension"/>
+    </declare-styleable>
+
+    <!--ForceClickImageView-->
+    <declare-styleable name="ForceClickImageView">
+        <attr name="foregroundColor" format="reference|color"/>
+    </declare-styleable>
+
+</resources>
