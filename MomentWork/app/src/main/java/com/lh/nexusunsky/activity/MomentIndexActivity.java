@@ -121,6 +121,11 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     }
 
     @Override
+    public void loadMomentsCache(List<MomentsInfo> infos) {
+        adapter.updateData(infos);
+    }
+
+    @Override
     public void loadMoreMoments(List<MomentsInfo> infos) {
         loadDataComplete();
         adapter.addDatas(infos);

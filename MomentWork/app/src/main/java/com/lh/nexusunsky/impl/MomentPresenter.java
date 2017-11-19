@@ -1,5 +1,6 @@
 package com.lh.nexusunsky.impl;
 
+import com.google.gson.Gson;
 import com.lh.nexusunsky.activity.MomentIndexActivity;
 import com.lh.nexusunsky.baselib.log.Logger;
 import com.lh.nexusunsky.baselib.mvp.BasePresenter;
@@ -9,6 +10,7 @@ import com.lh.nexusunsky.baselib.network.EasyHttp;
 import com.lh.nexusunsky.baselib.network.response.JsonResponse;
 import com.lh.nexusunsky.baselib.utils.GsonUtil;
 import com.lh.nexusunsky.baselib.utils.MessageHelper;
+import com.lh.nexusunsky.cache.MomentsInfoCache;
 import com.lh.nexusunsky.domain.MineInfo;
 import com.lh.nexusunsky.domain.MomentsInfo;
 import com.lh.nexusunsky.item.moments.MomentItem;
@@ -27,7 +29,8 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
     private static final String TAG = MomentPresenter.class.getSimpleName();
     private static final int EACH_PAGE = 5;
-    public static final int DEFAULT_INDEX = 1;
+    private static final int DEFAULT_INDEX = 1;
+    private static final Void VOID = null;
 
     private List<MomentsInfo> mMemoryCache;
     private int currentPage = DEFAULT_INDEX;
@@ -41,6 +44,8 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         void loadMoreMoments(List<MomentsInfo> infos);
 
         void refreshMoments(List<MomentsInfo> infos);
+
+        void loadMomentsCache(List<MomentsInfo> infos);
 
         void loadDataComplete();
 
@@ -69,6 +74,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         view.showLoading();
         currentPage = DEFAULT_INDEX;
         dataModel.fetchDataFromRemote();
+        dataModel.loadDataFromLocal(VOID);
     }
 
     public void loadMore() {
@@ -101,10 +107,15 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
     }
 
-    public class MomentInfoModel implements IModel<MomentsInfo, Void> {
+    public class MomentInfoModel implements IModel<Void, Void> {
 
         private static final String HTTP_TWEETS = "http://thoughtworks-ios.herokuapp.com/user/jsmith/tweets";
         private static final String HTTP_USER_JSMITH = "http://thoughtworks-ios.herokuapp.com/user/jsmith";
+        private MomentsInfoCache mCache;
+
+        MomentInfoModel() {
+            mCache = new MomentsInfoCache();
+        }
 
         @Override
         public void fetchDataFromRemote() {
@@ -117,15 +128,38 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
 
         @Override
-        public void loadDataFromLocal(MomentsInfo momentsInfo) {
-            //Empty Body
+        public void loadDataFromLocal(Void v) {
+            final MomentIndexActivity view = checkThenGet();
+            if (view == null) {
+                return;
+            }
+            loadMomentCache(view);
+            loadMineCache(view);
+        }
+
+        private void loadMineCache(MomentIndexActivity view) {
+            final MineInfo info = mCache.loadMineInfoCache();
+            if (info != null) {
+                view.refreshMineInfo(info);
+            } else {
+                MessageHelper.showMessage("No MineInfo Cache Found !");
+            }
+        }
+
+        private void loadMomentCache(MomentIndexActivity view) {
+            mMemoryCache = mCache.loadMomentsInfoCache();
+            if (mMemoryCache != null && !mMemoryCache.isEmpty()) {
+                refreshMomentInfos(view);
+                view.loadMomentsCache(mTemp);
+            } else {
+                MessageHelper.showMessage("No MomentInfo Cache Found !");
+            }
         }
 
         @Override
-        public Void onFetchDataSuccess(MomentsInfo momentsInfo) {
+        public Void onFetchDataSuccess(Void v) {
             return null;
         }
-
 
         @Override
         public void onFetchDataFailed(String o) {
@@ -139,7 +173,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
 
         @Override
-        public Void onLoadDataFinished(MomentsInfo momentsInfo) {
+        public Void onLoadDataFinished(Void v) {
             return null;
         }
 
@@ -152,8 +186,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                             final String json = response.toString();
                             Logger.d("onSuccess", json);
                             cacheMoments(GsonUtil.INSTANCE.toList(json, MomentsInfo.class));
-                            calculateTotal();
-                            handleMomentsInfo(0, currentPage * EACH_PAGE);
+                            refreshMomentInfos(view);
                             view.refreshMoments(mTemp);
                         }
 
@@ -162,6 +195,30 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                             onFetchDataFailed(errorMsg);
                         }
                     });
+        }
+
+        private void fetchMineData(final MomentIndexActivity view) {
+            EasyHttp.getHttp().get().setUrl(HTTP_USER_JSMITH).tag(view)
+                    .enqueue(new JsonResponse() {
+                        @Override
+                        public void onSuccess(int statusCode, JSONObject response) {
+                            super.onSuccess(statusCode, response);
+                            final String jsonPair = response.toString();
+                            Logger.d("onSuccess", jsonPair);
+                            mCache.saveMineInfo(jsonPair);
+                            view.refreshMineInfo(new MineInfo(jsonPair));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, String errorMsg) {
+                            onFetchDataFailed(errorMsg);
+                        }
+                    });
+        }
+
+        private void refreshMomentInfos(MomentIndexActivity view) {
+            calculateTotal();
+            handleMomentsInfo(0, currentPage * EACH_PAGE);
         }
 
         private void cacheMoments(List<MomentsInfo> beanOnes) {
@@ -177,24 +234,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                 }
                 mMemoryCache.add(info);
             }
-        }
-
-        private void fetchMineData(final MomentIndexActivity view) {
-            EasyHttp.getHttp().get().setUrl(HTTP_USER_JSMITH).tag(view)
-                    .enqueue(new JsonResponse() {
-                        @Override
-                        public void onSuccess(int statusCode, JSONObject response) {
-                            super.onSuccess(statusCode, response);
-                            final String jsonPair = response.toString();
-                            Logger.d("onSuccess", jsonPair);
-                            view.refreshMineInfo(new MineInfo(jsonPair));
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, String errorMsg) {
-                            onFetchDataFailed(errorMsg);
-                        }
-                    });
+            mCache.saveMomentInfo(new Gson().toJson(mMemoryCache));
         }
 
         private void calculateTotal() {

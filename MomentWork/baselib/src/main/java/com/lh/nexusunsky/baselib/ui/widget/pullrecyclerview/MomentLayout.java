@@ -333,7 +333,12 @@ public class MomentLayout extends FrameLayout {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && isScrollToBottom() && currentStatus != Status.REFRESHING) {
-                mInteractListener.onLoadMore();
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mInteractListener.onLoadMore();
+                    }
+                }, DELAY_MILLIS);
                 Logger.i("loadmoretag", "loadmore");
                 pullMode = PullMode.FROM_BOTTOM;
                 setCurrentStatus(Status.REFRESHING);
