@@ -39,7 +39,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
         hideStatusBar();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setNavigation();
         attach();
     }
 
@@ -53,11 +52,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
         setTitleRightIcon(R.drawable.ic_camera);
         setTitleLeftText("发现");
         setTitleLeftIcon(R.drawable.back_left);
-    }
-
-    @Override
-    public void parseIntentInfo(Intent intent) {
-        //Empty Body
     }
 
     @Override
@@ -89,6 +83,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void initView() {
+        setNavigation();
         mHostItem = new HostItemHolder(this);
         layoutMoment = (MomentLayout) findViewById(R.id.rv_moment);
         layoutMoment.setInteractListener(this);
@@ -101,36 +96,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
         adapter = builder.build();
         layoutMoment.setAdapter(adapter);
         layoutMoment.autoRefresh();
-    }
-
-    @Override
-    public void initListener() {
-        //Empty Body
-    }
-
-    @Override
-    public void bindDataToView(Object data) {
-        //Empty Body
-    }
-
-    @Override
-    public void showLoading() {
-        //Empty Body
-    }
-
-    @Override
-    public void dismissLoading() {
-        //Empty Body
-    }
-
-    @Override
-    public void showError(String e) {
-        //Empty Body
-    }
-
-    @Override
-    public void showEmpty() {
-        //Empty Body
     }
 
     @Override
@@ -171,5 +136,40 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
         loadDataComplete();
         layoutMoment.setMode(Mode.REFRESH);
         MessageHelper.showMessage(getString(R.string.double_click));
+    }
+
+    @Override
+    public void parseIntentInfo(Intent intent) {
+        //Empty Body
+    }
+
+    @Override
+    public void initListener() {
+        //Empty Body
+    }
+
+    @Override
+    public void bindDataToView(Object data) {
+        //Empty Body
+    }
+
+    @Override
+    public void showLoading() {
+        //Empty Body
+    }
+
+    @Override
+    public void dismissLoading() {
+        //Empty Body
+    }
+
+    @Override
+    public void showError(String e) {
+        //Empty Body
+    }
+
+    @Override
+    public void showEmpty() {
+        //Empty Body
     }
 }
