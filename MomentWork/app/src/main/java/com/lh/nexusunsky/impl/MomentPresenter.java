@@ -35,10 +35,6 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
     private int mTotalCount;
     private int mTotalPage;
 
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
     public interface MomentView extends IView {
         void refreshMineInfo(MineInfo hostInfo);
 
@@ -71,6 +67,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
         Logger.d(TAG, "MomentIndexActivity.presenting");
         view.showLoading();
+        currentPage = DEFAULT_INDEX;
         dataModel.fetchDataFromRemote();
     }
 
@@ -98,7 +95,6 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                 view.loadMoreMoments(mTemp);
                 currentPage++;
             } else {
-                view.loadDataComplete();
                 view.loadDataFinished();
             }
         }

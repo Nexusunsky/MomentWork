@@ -41,20 +41,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
         setContentView(R.layout.activity_main);
         setNavigation();
         attach();
-
-        mHostItem = new HostItemHolder(this);
-
-        layoutMoment = (MomentLayout) findViewById(R.id.rv_moment);
-        layoutMoment.setInteractListener(this);
-        layoutMoment.addHeaderView(mHostItem.getView());
-        MomentsAdapter.Builder<MomentsInfo> builder = new MomentsAdapter.Builder<>(this);
-        builder.setData(new ArrayList<MomentsInfo>())
-                .addType(EmptyMomentItem.class, MomentItem.Type.EMPTY_CONTENT, R.layout.moments_empty_content)
-                .addType(MultiImageMomentsItem.class, MomentItem.Type.MULTI_IMAGES, R.layout.moments_multi_image)
-                .addType(TextOnlyItem.class, MomentItem.Type.TEXT_ONLY, R.layout.moments_only_text);
-        adapter = builder.build();
-        layoutMoment.setAdapter(adapter);
-        layoutMoment.autoRefresh();
     }
 
     private void attach() {
@@ -71,6 +57,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void parseIntentInfo(Intent intent) {
+        //Empty Body
     }
 
     @Override
@@ -83,7 +70,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
                 layoutMoment.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        setTitle("朋友圈");
                         layoutMoment.autoRefresh();
                     }
                 }, 200);
@@ -94,7 +80,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     @Override
     public void onBackPressed() {
         if (System.currentTimeMillis() - lastClickBackTime > MIN_INTERVAL) {
-            MessageHelper.showMessage("再点一次退出");
+            MessageHelper.showMessage(getString(R.string.quite_tips));
             lastClickBackTime = System.currentTimeMillis();
         } else {
             super.onBackPressed();
@@ -103,42 +89,52 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void initView() {
-
+        mHostItem = new HostItemHolder(this);
+        layoutMoment = (MomentLayout) findViewById(R.id.rv_moment);
+        layoutMoment.setInteractListener(this);
+        layoutMoment.addHeaderView(mHostItem.getView());
+        MomentsAdapter.Builder<MomentsInfo> builder = new MomentsAdapter.Builder<>(this);
+        builder.setData(new ArrayList<MomentsInfo>())
+                .addType(EmptyMomentItem.class, MomentItem.Type.EMPTY_CONTENT, R.layout.moments_empty_content)
+                .addType(MultiImageMomentsItem.class, MomentItem.Type.MULTI_IMAGES, R.layout.moments_multi_image)
+                .addType(TextOnlyItem.class, MomentItem.Type.TEXT_ONLY, R.layout.moments_only_text);
+        adapter = builder.build();
+        layoutMoment.setAdapter(adapter);
+        layoutMoment.autoRefresh();
     }
 
     @Override
     public void initListener() {
-
+        //Empty Body
     }
 
     @Override
     public void bindDataToView(Object data) {
-
+        //Empty Body
     }
 
     @Override
     public void showLoading() {
-
+        //Empty Body
     }
 
     @Override
     public void dismissLoading() {
-
+        //Empty Body
     }
 
     @Override
     public void showError(String e) {
-
+        //Empty Body
     }
 
     @Override
     public void showEmpty() {
-
+        //Empty Body
     }
 
     @Override
     public void onRefresh() {
-        ((MomentPresenter) presenter).setCurrentPage(MomentPresenter.DEFAULT_INDEX);
         presenter.presenting();
     }
 
@@ -154,7 +150,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void refreshMoments(List<MomentsInfo> infos) {
-        setTitle("朋友圈");
         loadDataComplete();
         adapter.updateData(infos);
         layoutMoment.setMode(Mode.BOTH);
@@ -173,7 +168,8 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void loadDataFinished() {
-        setTitle("双击可返回顶部");
+        loadDataComplete();
         layoutMoment.setMode(Mode.REFRESH);
+        MessageHelper.showMessage(getString(R.string.double_click));
     }
 }
