@@ -36,7 +36,6 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        hideStatusBar();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         attach();

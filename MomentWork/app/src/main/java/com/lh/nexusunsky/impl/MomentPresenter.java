@@ -91,7 +91,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                 }
                 Logger.d(TAG, " currentPage :" + currentPage
                         + "  mTotalCount :" + mTotalCount + " destIndex : " + destIndex);
-                handleMomentsInfo(view, currentPage * EACH_PAGE, destIndex);
+                handleMomentsInfo(currentPage * EACH_PAGE, destIndex);
                 view.loadMoreMoments(mTemp);
                 currentPage++;
             } else {
@@ -101,6 +101,10 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
     }
 
     public class MomentInfoModel implements IModel<MomentsInfo, Void> {
+
+        private static final String HTTP_TWEETS = "http://thoughtworks-ios.herokuapp.com/user/jsmith/tweets";
+        private static final String HTTP_USER_JSMITH = "http://thoughtworks-ios.herokuapp.com/user/jsmith";
+
         @Override
         public void fetchDataFromRemote() {
             final MomentIndexActivity view = checkThenGet();
@@ -113,7 +117,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
         @Override
         public void loadDataFromLocal(MomentsInfo momentsInfo) {
-
+            //Empty Body
         }
 
         @Override
@@ -139,8 +143,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
 
         private void fetchTweetsData(final MomentIndexActivity view) {
-            String url = "http://thoughtworks-ios.herokuapp.com/user/jsmith/tweets";
-            EasyHttp.getHttp().get().setUrl(url).tag(view)
+            EasyHttp.getHttp().get().setUrl(HTTP_TWEETS).tag(view)
                     .enqueue(new JsonResponse() {
                         @Override
                         public void onSuccess(int statusCode, JSONArray response) {
@@ -149,7 +152,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                             Logger.d("onSuccess", json);
                             cacheMoments(GsonUtil.INSTANCE.toList(json, MomentsInfo.class));
                             calculateTotal();
-                            handleMomentsInfo(view, 0, currentPage * EACH_PAGE);
+                            handleMomentsInfo(0, currentPage * EACH_PAGE);
                             view.refreshMoments(mTemp);
                         }
 
@@ -176,8 +179,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
 
         private void fetchMineData(final MomentIndexActivity view) {
-            String url = "http://thoughtworks-ios.herokuapp.com/user/jsmith";
-            EasyHttp.getHttp().get().setUrl(url).tag(view)
+            EasyHttp.getHttp().get().setUrl(HTTP_USER_JSMITH).tag(view)
                     .enqueue(new JsonResponse() {
                         @Override
                         public void onSuccess(int statusCode, JSONObject response) {
@@ -204,7 +206,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         }
     }
 
-    private void handleMomentsInfo(MomentIndexActivity view, int startIndex, int destIndex) {
+    private void handleMomentsInfo(int startIndex, int destIndex) {
         if (!mTemp.isEmpty()) {
             mTemp.clear();
         }
