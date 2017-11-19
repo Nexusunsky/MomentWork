@@ -56,7 +56,8 @@ public class MomentLayout extends FrameLayout {
     private static final String TAG = MomentLayout.class.getSimpleName();
     private static final int LEFT_MARGIN = UIHelper.dipToPx(12);
     private static final int REFRESH_POSITION = UIHelper.dipToPx(90);
-    private static final int DELAY_MILLIS = 500;
+    private static final int DELAY_MILLIS = 1000;
+    public static final int MID_DELAY_MILLIS = 2000;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({Status.DEFAULT, Status.REFRESHING})

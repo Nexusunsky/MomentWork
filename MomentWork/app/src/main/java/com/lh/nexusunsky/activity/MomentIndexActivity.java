@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.lh.nexusunsky.adapter.MomentsAdapter;
 import com.lh.nexusunsky.baselib.base.activity.NavigateActivity;
+import com.lh.nexusunsky.baselib.base.context.AppContext;
 import com.lh.nexusunsky.baselib.ui.widget.NavigationBar;
 import com.lh.nexusunsky.baselib.ui.widget.pullrecyclerview.MomentLayout;
 import com.lh.nexusunsky.baselib.ui.widget.pullrecyclerview.listener.OnInteractListener;
@@ -132,9 +133,14 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     public void loadDataFinished() {
-        loadDataComplete();
-        layoutMoment.setMode(Mode.REFRESH);
         MessageHelper.showMessage(getString(R.string.double_click));
+        loadDataComplete();
+        AppContext.getMainHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layoutMoment.setMode(Mode.REFRESH);
+            }
+        }, MomentLayout.MID_DELAY_MILLIS);
     }
 
     @Override
