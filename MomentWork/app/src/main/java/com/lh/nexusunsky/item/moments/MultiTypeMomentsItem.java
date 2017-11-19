@@ -1,4 +1,4 @@
-package com.lh.nexusunsky.item;
+package com.lh.nexusunsky.item.moments;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,12 +22,12 @@ import java.util.List;
 /**
  * @author Nexusunsky
  */
-public class MultiImageMomentsItem extends BaseMomentItem {
+public class MultiTypeMomentsItem extends BaseMomentItem {
 
     private PhotoContents imageContainer;
     private InnerContainerAdapter adapter;
 
-    public MultiImageMomentsItem(Context context, ViewGroup viewGroup, int layoutResId) {
+    public MultiTypeMomentsItem(Context context, ViewGroup viewGroup, int layoutResId) {
         super(context, viewGroup, layoutResId);
     }
 

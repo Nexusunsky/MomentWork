@@ -13,13 +13,13 @@ import com.lh.nexusunsky.domain.MineInfo;
 /**
  * @author Nexusunsky
  */
-public class HostItemHolder {
+public class HostItem {
     private View vRoot;
     private ImageView ivWall;
     private ImageView ivAvatar;
     private TextView tvUsername;
 
-    public HostItemHolder(Context context) {
+    public HostItem(Context context) {
         this.vRoot = LayoutInflater.from(context).inflate(R.layout.circle_host_header, null);
         this.tvUsername = (TextView) vRoot.findViewById(R.id.host_id);
         this.ivWall = (ImageView) vRoot.findViewById(R.id.friend_wall_pic);

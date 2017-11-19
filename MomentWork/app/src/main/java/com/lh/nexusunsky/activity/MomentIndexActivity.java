@@ -14,11 +14,11 @@ import com.lh.nexusunsky.baselib.utils.MessageHelper;
 import com.lh.nexusunsky.domain.MineInfo;
 import com.lh.nexusunsky.domain.MomentsInfo;
 import com.lh.nexusunsky.impl.MomentPresenter;
-import com.lh.nexusunsky.item.EmptyMomentItem;
-import com.lh.nexusunsky.item.HostItemHolder;
-import com.lh.nexusunsky.item.MomentItem;
-import com.lh.nexusunsky.item.MultiImageMomentsItem;
-import com.lh.nexusunsky.item.TextOnlyItem;
+import com.lh.nexusunsky.item.moments.EmptyMomentItem;
+import com.lh.nexusunsky.item.HostItem;
+import com.lh.nexusunsky.item.moments.MomentItem;
+import com.lh.nexusunsky.item.moments.MultiTypeMomentsItem;
+import com.lh.nexusunsky.item.moments.TextOnlyMomentItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     private static final String TAG = MomentIndexActivity.class.getSimpleName();
     private static final int MIN_INTERVAL = 2000;
     private MomentLayout layoutMoment;
-    private HostItemHolder mHostItem;
+    private HostItem mHostItem;
     private MomentsAdapter adapter;
     private long lastClickBackTime;
 
@@ -84,15 +84,15 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     @Override
     public void initView() {
         setNavigation();
-        mHostItem = new HostItemHolder(this);
+        mHostItem = new HostItem(this);
         layoutMoment = (MomentLayout) findViewById(R.id.rv_moment);
         layoutMoment.setInteractListener(this);
         layoutMoment.addHeaderView(mHostItem.getView());
         MomentsAdapter.Builder<MomentsInfo> builder = new MomentsAdapter.Builder<>(this);
         builder.setData(new ArrayList<MomentsInfo>())
                 .addType(EmptyMomentItem.class, MomentItem.Type.EMPTY_CONTENT, R.layout.moments_empty_content)
-                .addType(MultiImageMomentsItem.class, MomentItem.Type.MULTI_IMAGES, R.layout.moments_multi_image)
-                .addType(TextOnlyItem.class, MomentItem.Type.TEXT_ONLY, R.layout.moments_only_text);
+                .addType(MultiTypeMomentsItem.class, MomentItem.Type.MULTI_IMAGES, R.layout.moments_multi_image)
+                .addType(TextOnlyMomentItem.class, MomentItem.Type.TEXT_ONLY, R.layout.moments_only_text);
         adapter = builder.build();
         layoutMoment.setAdapter(adapter);
         layoutMoment.autoRefresh();

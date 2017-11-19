@@ -2,7 +2,7 @@ package com.lh.nexusunsky.domain;
 
 import com.lh.nexusunsky.baselib.log.Logger;
 import com.lh.nexusunsky.baselib.utils.StringUtil;
-import com.lh.nexusunsky.item.MomentItem;
+import com.lh.nexusunsky.item.moments.MomentItem;
 
 import java.util.List;
 

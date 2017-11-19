@@ -11,7 +11,7 @@ import com.lh.nexusunsky.baselib.utils.GsonUtil;
 import com.lh.nexusunsky.baselib.utils.MessageHelper;
 import com.lh.nexusunsky.domain.MineInfo;
 import com.lh.nexusunsky.domain.MomentsInfo;
-import com.lh.nexusunsky.item.MomentItem;
+import com.lh.nexusunsky.item.moments.MomentItem;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,6 +72,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
     }
 
     public void loadMore() {
+        Logger.d(TAG, "MomentIndexActivity.loadMore");
         final MomentIndexActivity view = checkThenGet();
         if (view == null) {
             Logger.d(TAG, "loadMore VIEW is Empty");

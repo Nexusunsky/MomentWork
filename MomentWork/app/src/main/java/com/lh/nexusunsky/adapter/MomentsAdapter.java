@@ -11,7 +11,7 @@ import com.lh.nexusunsky.baselib.base.adapter.BaseRecyclerViewAdapter;
 import com.lh.nexusunsky.baselib.log.Logger;
 import com.lh.nexusunsky.domain.MomentsInfo;
 import com.lh.nexusunsky.impl.MomentPresenter;
-import com.lh.nexusunsky.item.BaseMomentItem;
+import com.lh.nexusunsky.item.moments.BaseMomentItem;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

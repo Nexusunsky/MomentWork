@@ -1,4 +1,4 @@
-package com.lh.nexusunsky.item;
+package com.lh.nexusunsky.item.moments;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,8 +11,8 @@ import com.lh.nexusunsky.domain.MomentsInfo;
 /**
  * @author Nexusunsky
  */
-public class TextOnlyItem extends BaseMomentItem {
-    public TextOnlyItem(Context context, ViewGroup viewGroup, int layoutResId) {
+public class TextOnlyMomentItem extends BaseMomentItem {
+    public TextOnlyMomentItem(Context context, ViewGroup viewGroup, int layoutResId) {
         super(context, viewGroup, layoutResId);
     }
 
