@@ -150,9 +150,9 @@ public abstract class BaseMomentItem extends BaseRecyclerViewHolder<MomentsInfo>
             eachComment.removeViews(commentList.size(), childCount - commentList.size());
         }
         for (int n = 0; n < commentList.size(); n++) {
-            CommentText commentWidget = (CommentText) eachComment.getChildAt(n);
-            if (commentWidget != null) {
-                commentWidget.setCommentText(commentList.get(n));
+            CommentText comment = (CommentText) eachComment.getChildAt(n);
+            if (comment != null) {
+                comment.setCommentText(commentList.get(n));
             }
         }
         return true;

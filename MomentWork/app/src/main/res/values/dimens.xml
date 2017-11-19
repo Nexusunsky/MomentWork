@@ -1,0 +1,10 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <!--朋友圈尺寸定义-->
+    <dimen name="item_avatar">48dp</dimen>
+    <dimen name="item_padding">16dp</dimen>
+
+    <!--Fonts-->
+    <dimen name="normal_font">14sp</dimen>
+</resources>

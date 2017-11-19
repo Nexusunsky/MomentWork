@@ -46,10 +46,10 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
     }
 
     private void setNavigation() {
-        setTitle("朋友圈");
+        setTitle(getString(R.string.moment_title));
         setTitleMode(NavigationBar.MODE_BOTH);
         setTitleRightIcon(R.drawable.ic_camera);
-        setTitleLeftText("发现");
+        setTitleLeftText(getString(R.string.moment_left));
         setTitleLeftIcon(R.drawable.back_left);
     }
 

@@ -15,10 +15,9 @@ import com.lh.nexusunsky.domain.CommentsBean;
  * @author Nexusunsky
  */
 public class CommentText extends TextView {
-    private static final String TAG = "CommentWidget";
-    //用户名颜色
-    private int textColor = 0xff517fae;
-    private static final int textSize = 14;
+    private static final String TAG = CommentText.class.getSimpleName();
+    private static final int TEXT_SIZE = 14;
+    private static final String SAID = " . said : ";
 
     public CommentText(Context context) {
         this(context, null);
@@ -32,7 +31,7 @@ public class CommentText extends TextView {
         super(context, attrs, defStyleAttr);
         setMovementMethod(LinkMovementMethod.getInstance());
         this.setHighlightColor(0x00000000);
-        setTextSize(textSize);
+        setTextSize(TEXT_SIZE);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -40,7 +39,7 @@ public class CommentText extends TextView {
         super(context, attrs, defStyleAttr, defStyleRes);
         setMovementMethod(LinkMovementMethod.getInstance());
         this.setHighlightColor(0x00000000);
-        setTextSize(textSize);
+        setTextSize(TEXT_SIZE);
     }
 
     public void setCommentText(CommentsBean info) {
@@ -49,7 +48,8 @@ public class CommentText extends TextView {
         }
         try {
             setTag(info);
-            setText(info.getContent());
+            final String content = info.getSender().getNick() + SAID + info.getContent();
+            setText(content);
         } catch (NullPointerException e) {
             Logger.e(TAG, e);
         }
