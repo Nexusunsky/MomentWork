@@ -35,7 +35,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (mPermissionHelper == null) {
             mPermissionHelper = new PermissionHelper(this);
         }
-        parseIntentInfo(getIntent());
+        final Intent intent = getIntent();
+        if (intent != null) {
+            parseIntentInfo(intent);
+        }
     }
 
     @Override
