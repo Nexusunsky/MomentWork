@@ -22,9 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!--glide-->
+        <meta-data
+            android:name="com.lh.nexusunsky.baselib.helper.imageloader.glide.GlobalGlideConfiguration"
+            android:value="GlideModule"/>
     </application>
-    <!--glide-->
-    <meta-data
-        android:name="com.lh.nexusunsky.baselib.helper.imageloader.glide.GlobalGlideConfiguration"
-        android:value="GlideModule"/>
 </manifest>
