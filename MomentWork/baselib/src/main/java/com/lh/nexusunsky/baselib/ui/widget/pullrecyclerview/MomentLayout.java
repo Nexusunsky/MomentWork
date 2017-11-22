@@ -168,7 +168,7 @@ public class MomentLayout extends FrameLayout {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                iconObserver.autoRefresh();
+                iconObserver.autoAnimateRefresh();
                 mInteractListener.onRefresh();
             }
         }, DELAY_MILLIS);
@@ -279,6 +279,7 @@ public class MomentLayout extends FrameLayout {
         decor.setOverScrollUpdateListener(new IOverScrollUpdateListener() {
             @Override
             public void onOverScrollUpdate(IOverScrollDecor decor, int state, float offset) {
+                Logger.i(TAG, "offset：" + offset);
                 if (offset > 0) {
                     if (!canRefresh()) {
                         return;
@@ -288,7 +289,12 @@ public class MomentLayout extends FrameLayout {
                         setCurrentStatus(Status.REFRESHING);
                         if (mInteractListener != null) {
                             Logger.i(TAG, "onRefresh");
-                            mInteractListener.onRefresh();
+                            postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mInteractListener.onRefresh();
+                                }
+                            }, DELAY_MILLIS);
                         }
                         setPullMode(PullMode.FROM_START);
                         iconObserver.catchRefreshEvent();
@@ -382,6 +388,7 @@ public class MomentLayout extends FrameLayout {
         }
 
         void catchPullEvent(float offset) {
+            Logger.i(TAG, " catchPullEvent " + offset);
             if (checkHacIcon()) {
                 refreshIcon.setRotation(-offset * 2);
                 if (offset >= refreshPosition) {
@@ -396,17 +403,25 @@ public class MomentLayout extends FrameLayout {
          * 调整icon的位置界限
          */
         private void adjustRefreshIconPosition() {
-            if (refreshIcon.getY() < 0) {
-                refreshIcon.offsetTopAndBottom(Math.abs(refreshIcon.getTop()));
-            } else if (refreshIcon.getY() > refreshPosition) {
-                refreshIcon.offsetTopAndBottom(-(refreshIcon.getTop() - refreshPosition));
+            final float refreshIconY = refreshIcon.getY();
+            final int top = refreshIcon.getTop();
+            Logger.i(TAG, " adjustRefreshIconPosition Y " + refreshIconY);
+            Logger.i(TAG, " adjustRefreshIconPosition Top " + top);
+            if (refreshIconY < 0) {
+                refreshIcon.offsetTopAndBottom(Math.abs(top));
+                Logger.i(TAG, " offsetTopAndBottom " + Math.abs(top));
+            } else if (refreshIconY > refreshPosition) {
+                refreshIcon.offsetTopAndBottom(-(top - refreshPosition));
+                Logger.i(TAG, " offsetTopAndBottom " + -(top - refreshPosition));
             }
         }
 
         void catchRefreshEvent() {
             if (checkHacIcon()) {
                 refreshIcon.clearAnimation();
-                if (refreshIcon.getTop() < refreshPosition) {
+                final int refreshIconTop = refreshIcon.getTop();
+                Logger.i(TAG, " refreshIcon.getTop() : " + refreshIconTop + "\n" + "refreshPosition" + refreshPosition);
+                if (refreshIconTop < refreshPosition) {
                     viewOffsetHelper.absoluteOffsetTopAndBottom(refreshPosition);
                 }
                 refreshIcon.startAnimation(rotateAnimation);
@@ -422,6 +437,7 @@ public class MomentLayout extends FrameLayout {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
                         float result = (float) animation.getAnimatedValue();
+                        Logger.i(" animation.getAnimatedValue() " + result);
                         catchPullEvent(result);
                     }
                 });
@@ -446,7 +462,7 @@ public class MomentLayout extends FrameLayout {
             return refreshIcon != null;
         }
 
-        void autoRefresh() {
+        void autoAnimateRefresh() {
             final ValueAnimator animator = ValueAnimator.ofFloat(0, refreshPosition);
             animator.setInterpolator(new LinearInterpolator());
             animator.setDuration(500);
