@@ -33,8 +33,8 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
     private static final Void VOID = null;
 
     private List<MomentsInfo> mMemoryCache;
-    private int currentPage = DEFAULT_INDEX;
     private List<MomentsInfo> mTemp;
+    private int currentPage = DEFAULT_INDEX;
     private int mTotalCount;
     private int mTotalPage;
 
@@ -54,14 +54,15 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
     public MomentPresenter(MomentIndexActivity view) {
         super(view);
-        mMemoryCache = new ArrayList<>();
-        mTemp = new ArrayList<>(EACH_PAGE);
     }
 
     @Override
     protected void bindDataSource() {
         Logger.d(TAG, "bindDataSource");
+        mMemoryCache = new ArrayList<>();
+        mTemp = new ArrayList<>(EACH_PAGE);
         dataModel = new MomentInfoModel();
+        dataModel.loadDataFromLocal(VOID);
     }
 
     @Override
@@ -74,7 +75,6 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         view.showLoading();
         currentPage = DEFAULT_INDEX;
         dataModel.fetchDataFromRemote();
-        dataModel.loadDataFromLocal(VOID);
     }
 
     public void loadMore() {
@@ -149,7 +149,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         private void loadMomentCache(MomentIndexActivity view) {
             mMemoryCache = mCache.loadMomentsInfoCache();
             if (mMemoryCache != null && !mMemoryCache.isEmpty()) {
-                refreshMomentInfos(view);
+                refreshMomentInfos();
                 view.loadMomentsCache(mTemp);
             } else {
                 MessageHelper.showMessage("No MomentInfo Cache Found !");
@@ -186,7 +186,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                             final String json = response.toString();
                             Logger.d("onSuccess", json);
                             cacheMoments(GsonUtil.INSTANCE.toList(json, MomentsInfo.class));
-                            refreshMomentInfos(view);
+                            refreshMomentInfos();
                             view.refreshMoments(mTemp);
                         }
 
@@ -216,7 +216,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                     });
         }
 
-        private void refreshMomentInfos(MomentIndexActivity view) {
+        private void refreshMomentInfos() {
             calculateTotal();
             handleMomentsInfo(0, currentPage * EACH_PAGE);
         }

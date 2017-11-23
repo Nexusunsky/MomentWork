@@ -80,8 +80,6 @@ public class MomentLayout extends FrameLayout {
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private ImageView refreshIcon;
-
-    private int refreshPosition;
     private PullRefreshFooter footerView;
 
     private boolean canPull;
@@ -125,10 +123,7 @@ public class MomentLayout extends FrameLayout {
         param.leftMargin = LEFT_MARGIN;
         addView(recyclerView, RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.MATCH_PARENT);
         addView(refreshIcon, param);
-
-        refreshPosition = REFRESH_POSITION;
-
-        iconObserver = new InnerRefreshIconObserver(refreshIcon, refreshPosition);
+        iconObserver = new InnerRefreshIconObserver(refreshIcon, REFRESH_POSITION);
 
         footerView = new PullRefreshFooter(getContext());
         addFooterView(footerView);
@@ -284,8 +279,7 @@ public class MomentLayout extends FrameLayout {
                     if (!canRefresh()) {
                         return;
                     }
-                    iconObserver.catchPullEvent(offset);
-                    if (offset >= refreshPosition && state == STATE_BOUNCE_BACK && currentStatus != Status.REFRESHING) {
+                    if (offset >= REFRESH_POSITION && state == STATE_BOUNCE_BACK && currentStatus != Status.REFRESHING) {
                         setCurrentStatus(Status.REFRESHING);
                         if (mInteractListener != null) {
                             Logger.i(TAG, "onRefresh");
@@ -298,6 +292,8 @@ public class MomentLayout extends FrameLayout {
                         }
                         setPullMode(PullMode.FROM_START);
                         iconObserver.catchRefreshEvent();
+                    } else {
+                        iconObserver.catchPullEvent(offset);
                     }
                 } else if (offset < 0) {
                     //底部的overscroll
@@ -370,7 +366,6 @@ public class MomentLayout extends FrameLayout {
         private ImageView refreshIcon;
         private final int refreshPosition;
         private RotateAnimation rotateAnimation;
-        private ValueAnimator mValueAnimator;
 
         InnerRefreshIconObserver(ImageView refreshIcon, int refreshPosition) {
             this.refreshIcon = refreshIcon;
@@ -388,13 +383,14 @@ public class MomentLayout extends FrameLayout {
         }
 
         void catchPullEvent(float offset) {
-            Logger.i(TAG, " catchPullEvent " + offset);
+            float result = offset;
+            Logger.i(TAG, " catchPullEvent " + result);
             if (checkHacIcon()) {
-                refreshIcon.setRotation(-offset * 2);
-                if (offset >= refreshPosition) {
-                    offset = refreshPosition;
+                refreshIcon.setRotation(-result * 2);
+                if (result >= refreshPosition) {
+                    result = refreshPosition;
                 }
-                viewOffsetHelper.absoluteOffsetTopAndBottom((int) offset);
+                viewOffsetHelper.absoluteOffsetTopAndBottom((int) result);
                 adjustRefreshIconPosition();
             }
         }
@@ -430,30 +426,28 @@ public class MomentLayout extends FrameLayout {
 
         void catchResetEvent() {
             Logger.i("refreshTop", " top  >>>  " + refreshIcon.getTop());
-            if (mValueAnimator == null) {
-                mValueAnimator = ValueAnimator.ofFloat(refreshPosition, 0);
-                mValueAnimator.setInterpolator(new LinearInterpolator());
-                mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        float result = (float) animation.getAnimatedValue();
-                        Logger.i(" animation.getAnimatedValue() " + result);
-                        catchPullEvent(result);
-                    }
-                });
-                mValueAnimator.addListener(new AnimUtils.SimpleAnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        refreshIcon.clearAnimation();
-                    }
-                });
-                mValueAnimator.setDuration(500);
-            }
+            final ValueAnimator aFloat = ValueAnimator.ofFloat(refreshPosition, 0);
+            aFloat.setInterpolator(new LinearInterpolator());
+            aFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float result = (float) animation.getAnimatedValue();
+                    Logger.i(" animation.getAnimatedValue() " + result);
+                    catchPullEvent(result);
+                }
+            });
+            aFloat.addListener(new AnimUtils.SimpleAnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    refreshIcon.clearAnimation();
+                }
+            });
+            aFloat.setDuration(500);
 
             refreshIcon.post(new Runnable() {
                 @Override
                 public void run() {
-                    mValueAnimator.start();
+                    aFloat.start();
                 }
             });
         }
