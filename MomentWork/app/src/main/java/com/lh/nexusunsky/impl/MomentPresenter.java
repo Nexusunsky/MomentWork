@@ -149,7 +149,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         private void loadMomentCache(MomentIndexActivity view) {
             mMemoryCache = mCache.loadMomentsInfoCache();
             if (mMemoryCache != null && !mMemoryCache.isEmpty()) {
-                refreshMomentInfos();
+                refreshMomentInfo();
                 view.loadMomentsCache(mTemp);
             } else {
                 MessageHelper.showMessage("No MomentInfo Cache Found !");
@@ -186,7 +186,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                             final String json = response.toString();
                             Logger.d("onSuccess", json);
                             cacheMoments(GsonUtil.INSTANCE.toList(json, MomentsInfo.class));
-                            refreshMomentInfos();
+                            refreshMomentInfo();
                             view.refreshMoments(mTemp);
                         }
 
@@ -216,7 +216,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                     });
         }
 
-        private void refreshMomentInfos() {
+        private void refreshMomentInfo() {
             calculateTotal();
             handleMomentsInfo(0, currentPage * EACH_PAGE);
         }
