@@ -1,7 +1,6 @@
 package com.lh.nexusunsky.impl;
 
 import com.google.gson.Gson;
-import com.lh.nexusunsky.activity.MomentIndexActivity;
 import com.lh.nexusunsky.baselib.log.Logger;
 import com.lh.nexusunsky.baselib.mvp.BasePresenter;
 import com.lh.nexusunsky.baselib.mvp.contract.IModel;
@@ -25,7 +24,7 @@ import java.util.List;
 /**
  * @author: Nexusunsky
  */
-public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPresenter.MomentInfoModel> {
+public class MomentPresenter extends BasePresenter<MomentPresenter.MomentView, MomentPresenter.MomentInfoModel> {
 
     private static final String TAG = MomentPresenter.class.getSimpleName();
     private static final int EACH_PAGE = 5;
@@ -52,7 +51,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
         void loadDataFinished();
     }
 
-    public MomentPresenter(MomentIndexActivity view) {
+    public MomentPresenter(MomentView view) {
         super(view);
     }
 
@@ -67,19 +66,19 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
     @Override
     public void presenting() {
-        final MomentIndexActivity view = checkThenGet();
+        final MomentView view = checkThenGet();
         if (view == null) {
             return;
         }
-        Logger.d(TAG, "MomentIndexActivity.presenting");
+        Logger.d(TAG, "MomentView.presenting");
         view.showLoading();
         currentPage = DEFAULT_INDEX;
         dataModel.fetchDataFromRemote();
     }
 
     public void loadMore() {
-        Logger.d(TAG, "MomentIndexActivity.loadMore");
-        final MomentIndexActivity view = checkThenGet();
+        Logger.d(TAG, "MomentView.loadMore");
+        final MomentView view = checkThenGet();
         if (view == null) {
             Logger.d(TAG, "loadMore VIEW is Empty");
             return;
@@ -119,7 +118,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
         @Override
         public void fetchDataFromRemote() {
-            final MomentIndexActivity view = checkThenGet();
+            final MomentView view = checkThenGet();
             if (view == null) {
                 return;
             }
@@ -129,7 +128,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
         @Override
         public void loadDataFromLocal(Void v) {
-            final MomentIndexActivity view = checkThenGet();
+            final MomentView view = checkThenGet();
             if (view == null) {
                 return;
             }
@@ -137,7 +136,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
             loadMineCache(view);
         }
 
-        private void loadMineCache(MomentIndexActivity view) {
+        private void loadMineCache(MomentView view) {
             final MineInfo info = mCache.loadMineInfoCache();
             if (info != null) {
                 view.refreshMineInfo(info);
@@ -146,7 +145,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
             }
         }
 
-        private void loadMomentCache(MomentIndexActivity view) {
+        private void loadMomentCache(MomentView view) {
             mMemoryCache = mCache.loadMomentsInfoCache();
             if (mMemoryCache != null && !mMemoryCache.isEmpty()) {
                 refreshMomentInfo();
@@ -163,7 +162,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
 
         @Override
         public void onFetchDataFailed(String o) {
-            final MomentIndexActivity view = checkThenGet();
+            final MomentView view = checkThenGet();
             if (view == null) {
                 return;
             }
@@ -177,7 +176,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
             return null;
         }
 
-        private void fetchTweetsData(final MomentIndexActivity view) {
+        private void fetchTweetsData(final MomentView view) {
             EasyHttp.getHttp().get().setUrl(HTTP_TWEETS).tag(view)
                     .enqueue(new JsonResponse() {
                         @Override
@@ -197,7 +196,7 @@ public class MomentPresenter extends BasePresenter<MomentIndexActivity, MomentPr
                     });
         }
 
-        private void fetchMineData(final MomentIndexActivity view) {
+        private void fetchMineData(final MomentView view) {
             EasyHttp.getHttp().get().setUrl(HTTP_USER_JSMITH).tag(view)
                     .enqueue(new JsonResponse() {
                         @Override
