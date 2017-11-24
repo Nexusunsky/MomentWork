@@ -32,6 +32,7 @@ import com.lh.nexusunsky.baselib.utils.ViewOffsetHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class MomentLayout extends FrameLayout {
 
     private InnerRefreshIconObserver iconObserver;
 
-    private OnInteractListener mInteractListener;
+    private WeakReference<OnInteractListener> wInteractHolder;
 
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
@@ -155,7 +156,11 @@ public class MomentLayout extends FrameLayout {
     }
 
     public void autoRefresh() {
-        if (!canRefresh() || iconObserver == null || mInteractListener == null) {
+        if (!canRefresh()) {
+            return;
+        }
+        final OnInteractListener actor = wInteractHolder.get();
+        if (actor == null || iconObserver == null) {
             return;
         }
         setPullMode(PullMode.FROM_START);
@@ -164,7 +169,7 @@ public class MomentLayout extends FrameLayout {
             @Override
             public void run() {
                 iconObserver.autoAnimateRefresh();
-                mInteractListener.onRefresh();
+                actor.onRefresh();
             }
         }, DELAY_MILLIS);
     }
@@ -183,7 +188,7 @@ public class MomentLayout extends FrameLayout {
 
     //------------------------------------------get/set-----------------------------------------------
     public void setInteractListener(OnInteractListener interactListener) {
-        this.mInteractListener = interactListener;
+        this.wInteractHolder = new WeakReference<>(interactListener);
     }
 
     public RecyclerView getRecyclerView() {
@@ -279,17 +284,20 @@ public class MomentLayout extends FrameLayout {
                     if (!canRefresh()) {
                         return;
                     }
-                    if (offset >= REFRESH_POSITION && state == STATE_BOUNCE_BACK && currentStatus != Status.REFRESHING) {
+                    if (offset >= REFRESH_POSITION && state == STATE_BOUNCE_BACK && currentStatus != Status
+                            .REFRESHING) {
                         setCurrentStatus(Status.REFRESHING);
-                        if (mInteractListener != null) {
-                            Logger.i(TAG, "onRefresh");
-                            postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mInteractListener.onRefresh();
-                                }
-                            }, DELAY_MILLIS);
+                        final OnInteractListener actor = wInteractHolder.get();
+                        if (actor == null || iconObserver == null) {
+                            return;
                         }
+                        Logger.i(TAG, "onRefresh");
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                actor.onRefresh();
+                            }
+                        }, DELAY_MILLIS);
                         setPullMode(PullMode.FROM_START);
                         iconObserver.catchRefreshEvent();
                     } else {
@@ -326,10 +334,14 @@ public class MomentLayout extends FrameLayout {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && isScrollToBottom() && currentStatus != Status.REFRESHING) {
+                final OnInteractListener actor = wInteractHolder.get();
+                if (actor == null || iconObserver == null) {
+                    return;
+                }
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mInteractListener.onLoadMore();
+                        actor.onLoadMore();
                     }
                 }, DELAY_MILLIS);
                 Logger.i("loadmoretag", "loadmore");
@@ -347,10 +359,14 @@ public class MomentLayout extends FrameLayout {
                 setPullMode(PullMode.FROM_BOTTOM);
                 setCurrentStatus(Status.REFRESHING);
                 footerView.onRefreshing();
+                final OnInteractListener actor = wInteractHolder.get();
+                if (actor == null || iconObserver == null) {
+                    return;
+                }
                 postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mInteractListener.onLoadMore();
+                        actor.onLoadMore();
                     }
                 }, DELAY_MILLIS);
             }

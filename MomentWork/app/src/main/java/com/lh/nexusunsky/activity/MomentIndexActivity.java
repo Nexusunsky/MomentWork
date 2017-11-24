@@ -1,11 +1,13 @@
 package com.lh.nexusunsky.activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.lh.nexusunsky.adapter.MomentsAdapter;
 import com.lh.nexusunsky.baselib.base.activity.NavigateActivity;
 import com.lh.nexusunsky.baselib.base.context.AppContext;
+import com.lh.nexusunsky.baselib.log.Logger;
 import com.lh.nexusunsky.baselib.ui.widget.NavigationBar;
 import com.lh.nexusunsky.baselib.ui.widget.pullrecyclerview.MomentLayout;
 import com.lh.nexusunsky.baselib.ui.widget.pullrecyclerview.listener.OnInteractListener;
@@ -37,9 +39,31 @@ public class MomentIndexActivity extends NavigateActivity implements MomentPrese
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Logger.i(TAG, " onCreate ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         attach();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Logger.i(TAG, " onConfigurationChanged ");
+        super.onConfigurationChanged(newConfig);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Logger.i(TAG, " onSaveInstanceState ");
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Logger.i(TAG, " onRestoreInstanceState ");
+
     }
 
     private void attach() {
